@@ -52,24 +52,44 @@ struct ContentView: View {
 //                }
 //            }
 //        }
-        ScrollView {
-            HStack(alignment: .top) {
-                LazyVGrid(columns: columns) {
-                    ForEach(storyController.stories) { story in
-                        Button {
-                            selectedStory = story
-                            showWebView.toggle()
-                        } label: {
-                            StoryCellView(story: .constant(story))
-                                .padding([.top, .bottom, .leading, .trailing], 10)
-                            
+        ScrollViewReader { scrollProxy in
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    Color.clear
+                        .frame(height: 1)
+                        .id("top")
+                    
+                    HStack(alignment: .top) {
+                        LazyVGrid(columns: columns) {
+                            ForEach(storyController.stories) { story in
+                                Button {
+                                    selectedStory = story
+                                    showWebView.toggle()
+                                } label: {
+                                    StoryCellView(story: .constant(story))
+                                        .padding([.top, .bottom, .leading, .trailing], 10)
+                                    
+                                }
+                                .background(.yellow)
+                                .opacity(story.read ?? false ? 0.4 : 0.9)
+                                .cornerRadius(15)
+                            }
                         }
-                        .background(.yellow)
-                        .opacity(story.read ?? false ? 0.4 : 0.9)
-                        .cornerRadius(15)
+                        .padding([.leading, .trailing], 10)
                     }
                 }
-                .padding([.leading, .trailing], 10)
+            }
+            .onChange(of: storySource) { _ in
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    scrollProxy.scrollTo("top", anchor: .top)
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ScrollToTop"))) { _ in
+                storyController.retrieveNewStories(from: storySource)
+                topScore = false
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    scrollProxy.scrollTo("top", anchor: .top)
+                }
             }
         }
         .listStyle(GroupedListStyle())
@@ -132,7 +152,16 @@ struct ContentView: View {
         .navigationBarItems(leading: TopBarOptionsView(topScore: $topScore.animation(),
                                                        readAll: $readAll.animation(),
                                                        unreadStories: $storyController.unreadStories.animation()),
-                            trailing: TopBarStorySourceView(storySource: $storySource.animation()))
+                            trailing: HStack {
+                                Button {
+                                    NotificationCenter.default.post(name: Notification.Name("ScrollToTop"), object: nil)
+                                } label: {
+                                    Image(systemName: "arrow.up.circle.fill")
+                                        .font(.title3)
+                                        .foregroundColor(.blue)
+                                }
+                                TopBarStorySourceView(storySource: $storySource.animation())
+                            })
         
     }
 }
