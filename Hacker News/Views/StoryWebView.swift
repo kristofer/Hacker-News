@@ -24,6 +24,7 @@ struct StoryWebView: View {
     @State var doneLoading: Bool = false
     @State var topBarWidthSize: CGFloat = UIScreen.main.bounds.width
     @StateObject var browserViewModel = BrowserViewModel()
+    @State private var showShareSheet = false
 
     @Environment(\.dismiss) private var dismiss
     
@@ -66,12 +67,19 @@ struct StoryWebView: View {
                             Image(systemName: "xmark")
                         }
                         .foregroundColor(.indigo)
-                                .padding([.leading,.trailing])
-//                        ProgressView()
-//                            .progressViewStyle(CircularProgressViewStyle(tint: .indigo))
-//                            .padding(.trailing, 3)
-//                            .opacity(doneLoading ? 0:1)
-                        Button { //launch
+                        .padding([.leading,.trailing])
+                        
+                        Button { // Share
+                            showShareSheet = true
+                        } label: {
+                            Image(systemName: "square.and.arrow.up")
+                                .resizable()
+                                .frame(width: 20, height: 25)
+                                .foregroundColor(.indigo)
+                        }
+                        .padding(.trailing, 8)
+                        
+                        Button { // Launch in Safari
                             if let strURL = story?.url, let url = URL(string: strURL)  {
                                 UIApplication.shared.open(url)
                             }
@@ -98,7 +106,61 @@ struct StoryWebView: View {
             }
             //.padding(.top)
         }
+        .sheet(isPresented: $showShareSheet) {
+            if let story = story,
+               let url = URL(string: story.url) {
+                ShareSheet(activityItems: [url, story.title], sourceRect: nil)
+            }
+        }
         //.ignoresSafeArea()
+    }
+}
+
+// MARK: - ShareSheet UIViewControllerRepresentable
+struct ShareSheet: UIViewControllerRepresentable {
+    let activityItems: [Any]
+    let applicationActivities: [UIActivity]? = nil
+    let sourceRect: CGRect?
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        // Add debug logging
+        print("📤 Creating share sheet with items: \(activityItems)")
+        
+        let controller = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: applicationActivities
+        )
+        
+        // Minimal exclusions for device testing
+        controller.excludedActivityTypes = []
+        
+        // Enhanced completion handler with debugging
+        controller.completionWithItemsHandler = { activityType, completed, returnedItems, error in
+            print("📤 Share completed:")
+            print("  - Activity: \(activityType?.rawValue ?? "none")")
+            print("  - Completed: \(completed)")
+            print("  - Error: \(error?.localizedDescription ?? "none")")
+            
+            if let error = error {
+                print("🚫 Share failed with error: \(error)")
+                print("🚫 Error domain: \(error._domain)")
+                print("🚫 Error code: \(error._code)")
+            }
+        }
+        
+        // iPad-specific configuration - essential for avoiding crashes
+        if let popover = controller.popoverPresentationController {
+            // Set a default source rect in the center of the screen
+            popover.sourceRect = CGRect(x: UIScreen.main.bounds.midX, y: 100, width: 0, height: 0)
+            popover.sourceView = UIView() // Minimal view reference
+            popover.permittedArrowDirections = [.up, .down]
+        }
+        
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
+        // No updates needed
     }
 }
 

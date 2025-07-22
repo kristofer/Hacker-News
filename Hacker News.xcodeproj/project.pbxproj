@@ -3,13 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		5CAB0E6E2D0C7711003BE228 /* BrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */; };
 		5CAB0E6F2D0C7711003BE228 /* BrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */; };
 		5CAB0E702D0C7711003BE228 /* BrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */; };
+		5CF53B452E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CF53B432E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md */; };
+		5CF53B492E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CF53B432E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md */; };
+		5CF53B5E2E2FC84E00270D15 /* Hacker News Share Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5CF53B542E2FC84E00270D15 /* Hacker News Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AC824A392701C862003776FF /* Hacker_NewsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC824A382701C862003776FF /* Hacker_NewsApp.swift */; };
 		AC824A402701C864003776FF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC824A3F2701C864003776FF /* Preview Assets.xcassets */; };
 		AC824A4A2701C864003776FF /* Hacker_NewsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC824A492701C864003776FF /* Hacker_NewsTests.swift */; };
@@ -76,6 +79,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5CF53B5C2E2FC84E00270D15 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC824A2D2701C862003776FF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5CF53B532E2FC84E00270D15;
+			remoteInfo = "Hacker News Share Extension";
+		};
 		AC824A462701C864003776FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AC824A2D2701C862003776FF /* Project object */;
@@ -92,8 +102,25 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		5CF53B632E2FC84E00270D15 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5CF53B5E2E2FC84E00270D15 /* Hacker News Share Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserViewModel.swift; sourceTree = "<group>"; };
+		5CF53B432E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "XCODE_SETUP_INSTRUCTIONS 2.md"; sourceTree = "<group>"; };
+		5CF53B542E2FC84E00270D15 /* Hacker News Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Hacker News Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CF53B732E2FC93F00270D15 /* Hacker News.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Hacker News.entitlements"; sourceTree = "<group>"; };
 		AC824A352701C862003776FF /* Hacker News.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hacker News.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC824A382701C862003776FF /* Hacker_NewsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hacker_NewsApp.swift; sourceTree = "<group>"; };
 		AC824A3C2701C864003776FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "Hacker News/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
@@ -141,7 +168,36 @@
 		AC824AC82703114B003776FF /* Hacker-News-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Hacker-News-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5CF53B712E2FC8D200270D15 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ShareExtensionView.swift,
+				ShareViewController.swift,
+			);
+			target = AC824A342701C862003776FF /* Hacker News */;
+		};
+		5CF53B742E2FCB3000270D15 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5CF53B532E2FC84E00270D15 /* Hacker News Share Extension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5CF53B552E2FC84E00270D15 /* Hacker News Share Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5CF53B712E2FC8D200270D15 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 5CF53B742E2FCB3000270D15 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Hacker News Share Extension"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		5CF53B512E2FC84E00270D15 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC824A322701C862003776FF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -169,9 +225,11 @@
 		AC824A2C2701C862003776FF = {
 			isa = PBXGroup;
 			children = (
+				5CF53B432E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md */,
 				AC824A372701C862003776FF /* Hacker News */,
 				AC824A482701C864003776FF /* Hacker NewsTests */,
 				AC824A522701C864003776FF /* Hacker NewsUITests */,
+				5CF53B552E2FC84E00270D15 /* Hacker News Share Extension */,
 				AC824A362701C862003776FF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -182,6 +240,7 @@
 				AC824A352701C862003776FF /* Hacker News.app */,
 				AC824A452701C864003776FF /* Hacker NewsTests.xctest */,
 				AC824A4F2701C864003776FF /* Hacker NewsUITests.xctest */,
+				5CF53B542E2FC84E00270D15 /* Hacker News Share Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -189,6 +248,7 @@
 		AC824A372701C862003776FF /* Hacker News */ = {
 			isa = PBXGroup;
 			children = (
+				5CF53B732E2FC93F00270D15 /* Hacker News.entitlements */,
 				AC824AC82703114B003776FF /* Hacker-News-Info.plist */,
 				AC824A382701C862003776FF /* Hacker_NewsApp.swift */,
 				AC824A652701C8A4003776FF /* Models */,
@@ -309,6 +369,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5CF53B532E2FC84E00270D15 /* Hacker News Share Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5CF53B602E2FC84E00270D15 /* Build configuration list for PBXNativeTarget "Hacker News Share Extension" */;
+			buildPhases = (
+				5CF53B502E2FC84E00270D15 /* Sources */,
+				5CF53B512E2FC84E00270D15 /* Frameworks */,
+				5CF53B522E2FC84E00270D15 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5CF53B552E2FC84E00270D15 /* Hacker News Share Extension */,
+			);
+			name = "Hacker News Share Extension";
+			packageProductDependencies = (
+			);
+			productName = "Hacker News Share Extension";
+			productReference = 5CF53B542E2FC84E00270D15 /* Hacker News Share Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		AC824A342701C862003776FF /* Hacker News */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AC824A592701C864003776FF /* Build configuration list for PBXNativeTarget "Hacker News" */;
@@ -316,10 +398,12 @@
 				AC824A312701C862003776FF /* Sources */,
 				AC824A322701C862003776FF /* Frameworks */,
 				AC824A332701C862003776FF /* Resources */,
+				5CF53B632E2FC84E00270D15 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5CF53B5D2E2FC84E00270D15 /* PBXTargetDependency */,
 			);
 			name = "Hacker News";
 			productName = "Hacker News";
@@ -369,9 +453,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1300;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1300;
 				TargetAttributes = {
+					5CF53B532E2FC84E00270D15 = {
+						CreatedOnToolsVersion = 16.2;
+						LastSwiftMigration = 1620;
+					};
 					AC824A342701C862003776FF = {
 						CreatedOnToolsVersion = 13.0;
 					};
@@ -401,11 +489,19 @@
 				AC824A342701C862003776FF /* Hacker News */,
 				AC824A442701C864003776FF /* Hacker NewsTests */,
 				AC824A4E2701C864003776FF /* Hacker NewsUITests */,
+				5CF53B532E2FC84E00270D15 /* Hacker News Share Extension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5CF53B522E2FC84E00270D15 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC824A332701C862003776FF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -423,6 +519,7 @@
 				AC824AC02701FB56003776FF /* 28667359.json in Resources */,
 				AC824AC727020CC9003776FF /* 28665918.json in Resources */,
 				AC824AC12701FB56003776FF /* 28669095.json in Resources */,
+				5CF53B492E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md in Resources */,
 				AC824AAC2701F6C9003776FF /* 28669477.json in Resources */,
 				AC824AAF2701F6C9003776FF /* 28669451.json in Resources */,
 				AC824AC52701FB56003776FF /* 28665256.json in Resources */,
@@ -450,12 +547,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CF53B452E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5CF53B502E2FC84E00270D15 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC824A312701C862003776FF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -520,6 +625,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5CF53B5D2E2FC84E00270D15 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5CF53B532E2FC84E00270D15 /* Hacker News Share Extension */;
+			targetProxy = 5CF53B5C2E2FC84E00270D15 /* PBXContainerItemProxy */;
+		};
 		AC824A472701C864003776FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AC824A342701C862003776FF /* Hacker News */;
@@ -533,6 +643,74 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		5CF53B612E2FC84E00270D15 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S7ZKK95T9U;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Hacker News Share Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Hacker News Share Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "co.tiogadigital.Hacker-News.Hacker-News-Share-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hacker News Share Extension/Hacker News Share Extension-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5CF53B622E2FC84E00270D15 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S7ZKK95T9U;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Hacker News Share Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Hacker News Share Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "co.tiogadigital.Hacker-News.Hacker-News-Share-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Hacker News Share Extension/Hacker News Share Extension-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		AC824A572701C864003776FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -655,6 +833,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "Hacker News/Hacker News.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Hacker News/Preview Content\"";
@@ -667,7 +846,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -687,6 +866,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "Hacker News/Hacker News.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Hacker News/Preview Content\"";
@@ -699,7 +879,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -716,7 +896,6 @@
 		AC824A5D2701C864003776FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -741,7 +920,6 @@
 		AC824A5E2701C864003776FF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -766,7 +944,6 @@
 		AC824A602701C864003776FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q5M44XYC56;
@@ -789,7 +966,6 @@
 		AC824A612701C864003776FF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q5M44XYC56;
@@ -812,6 +988,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5CF53B602E2FC84E00270D15 /* Build configuration list for PBXNativeTarget "Hacker News Share Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CF53B612E2FC84E00270D15 /* Debug */,
+				5CF53B622E2FC84E00270D15 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AC824A302701C862003776FF /* Build configuration list for PBXProject "Hacker News" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

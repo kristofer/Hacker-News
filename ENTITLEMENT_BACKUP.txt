@@ -1,0 +1,16 @@
+# If sharing still fails, try adding this to Hacker News.entitlements:
+
+<key>com.apple.security.network.client</key>
+<true/>
+
+# This allows outbound network connections which some share activities might need.
+# However, this should NOT be necessary for basic URL sharing.
+
+# The main entitlements needed are:
+1. App Groups (already configured)
+2. Proper code signing (check in Xcode)
+
+# Common iPad sharing issues:
+1. Popover configuration (fixed above)
+2. Code signing problems
+3. Sandbox extension issues (device-specific)
