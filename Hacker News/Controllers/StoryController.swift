@@ -106,6 +106,20 @@ class StoryController: StoryControllerProtocol, ObservableObject {
     private var currentPage: Int = 0
     let pageSize: Int = 30
 
+    init() {
+        // Observe iCloud key-value store changes so that read state updated on another
+        // device is immediately reflected in the current session.
+        NotificationCenter.default.publisher(
+            for: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+            object: NSUbiquitousKeyValueStore.default
+        )
+        .receive(on: DispatchQueue.main)
+        .sink { [weak self] _ in
+            self?.applyiCloudReadState()
+        }
+        .store(in: &cancellable)
+    }
+
     
     /// Fetch for new stories from selected source and update the `stories` property and
     /// save new stories locally.
@@ -233,6 +247,26 @@ class StoryController: StoryControllerProtocol, ObservableObject {
     func sortByScore(_ topScore:Bool) {
         withAnimation {
             stories.sort(by: topScore ? { $0.score > $1.score } : { $0.time > $1.time })
+        }
+    }
+
+    /// Applies the latest iCloud read state to the currently displayed stories.
+    /// Called when the iCloud key-value store notifies us of external changes.
+    private func applyiCloudReadState() {
+        // Invalidate the cached set so we pick up the updated values from iCloud.
+        localStorage.invalidateReadStoryIdsCache()
+        let readIds = localStorage.readStoryIds()
+        var changed = false
+        for index in stories.indices {
+            if stories[index].read != true && readIds.contains(stories[index].id) {
+                stories[index].read = true
+                changed = true
+            }
+        }
+        if changed {
+            withAnimation {
+                unreadStories = stories.filter { $0.read == false }.count
+            }
         }
     }
     
