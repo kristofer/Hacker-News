@@ -77,6 +77,19 @@ struct ContentView: View {
                         }
                         .padding([.leading, .trailing], 10)
                     }
+                    
+                    // Infinite-scroll trigger: show a spinner while loading; when the
+                    // spinner itself scrolls into view it requests the next page.
+                    if storyController.isLoadingMore {
+                        ProgressView()
+                            .padding()
+                    } else if storyController.hasMoreStories && !storyController.stories.isEmpty {
+                        Color.clear
+                            .frame(height: 1)
+                            .onAppear {
+                                storyController.loadMoreStories(from: storySource)
+                            }
+                    }
                 }
             }
             .onChange(of: storySource) { _ in

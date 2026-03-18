@@ -23,7 +23,7 @@ class PersistenceController: ObservableObject {
     private let userDefaults: UserDefaults
     private let settingsKey: String = "settings"
     /// Maximum items to be saved ( items above this limit will be discated )
-    public var maxItems: Int = 100 //30
+    public var maxItems: Int = 500
     // Current number of stories loaded/saved
     private var totalItems: Int = 0
     

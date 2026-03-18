@@ -52,16 +52,21 @@ protocol StoryControllerProtocol  {
     /* Methods
      
      retrieveNewStories     - Retrieve stories from API based on story source set and save to storage.
+     loadMoreStories        - Load the next page of stories from the API.
      loadLocalStories       - Load stories from storage based on story source set.
      readStory              - Will be set when errors occurs while retrieving stories from API.
      sortByScore            - Holds the selected story source. Affects when retrieving stories from API.
      
      */
     func retrieveNewStories(from storySource: StorySource)
+    func loadMoreStories(from storySource: StorySource)
     func loadLocalStories(from storySource: StorySource)
     func readStory(story: StoryModel)
     func readAllStories(from storySource: StorySource)
     func sortByScore(_ topScore:Bool)
+    
+    var isLoadingMore: Bool { get }
+    var hasMoreStories: Bool { get }
     
 }
 
@@ -85,56 +90,104 @@ class StoryController: StoryControllerProtocol, ObservableObject {
         cancellable     - A type-erasing cancellable object used when retrieving stories.
         api             - The Hacker News API instance.
         localStorage    - The Persistence storage instance.
+        isLoadingMore   - True while a page of stories is being fetched.
+        hasMoreStories  - True when additional pages of stories are available.
+        allStoryIds     - Full ordered list of story IDs from the current API response.
+        currentPage     - Index of the next page to fetch (0-based).
+        pageSize        - Number of stories fetched per page.
 
      */
     var cancellable = Set<AnyCancellable>()
     let api = HackerNewsAPI()
     let localStorage = PersistenceController()
+    @Published var isLoadingMore: Bool = false
+    @Published var hasMoreStories: Bool = false
+    private var allStoryIds: [Int] = []
+    private var currentPage: Int = 0
+    let pageSize: Int = 30
 
     
     /// Fetch for new stories from selected source and update the `stories` property and
     /// save new stories locally.
     /// - Parameter storySource: Enum that controls the story souce for Hacker News articles
     func retrieveNewStories(from storySource: StorySource) {
-        
+
+        // Reset pagination state
+        allStoryIds = []
+        currentPage = 0
+        hasMoreStories = false
+        isLoadingMore = false
+
         // Fetch news stories ID from API
         api.allStoriesId(endPoint: storySource.endPointConvesion().url)
-            .sink { error in
-                switch error {
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                switch completion {
                     case .failure(_):
-                        DispatchQueue.main.async {
-                            self.fetchError = .invalidServerResponse
-                        }
+                        self?.fetchError = .invalidServerResponse
                     case .finished:
-                        DispatchQueue.main.async {
-                            self.fetchError = nil
-                        }
+                        self?.fetchError = nil
                 }
-            } receiveValue: { newIds in
-                // Iterate all new story Ids limited by a max item number
-                for id in newIds.prefix(self.api.maxItems) {
-                    // Fetch the story from API
-                    self.api.story(endPoint: HackerNewsAPI.EndPoint.story(id).url)
-                        .sink { error in
-                            switch error {
-                                case .failure(_): self.fetchError = .invalidServerResponse
-                                case .finished: break
-                            }
-                        } receiveValue: { story in
-                            // Set custom properties
-                            var story = story
-                            story.read = false
-                            // Save to local storage
-                            self.localStorage.saveStory(story: story, storySource: storySource, storyRead: false)
-                            // Load all saved stories
-                            self.loadLocalStories(from: storySource)
-                        }
-                        .store(in: &self.cancellable)
-                }
-                
+            } receiveValue: { [weak self] newIds in
+                guard let self = self else { return }
+                self.allStoryIds = newIds
+                self.hasMoreStories = !newIds.isEmpty
+                self.fetchNextPage(from: storySource)
             }
             .store(in: &cancellable)
-        
+
+    }
+
+    /// Load the next page of stories from the API for the given source.
+    /// Does nothing if a fetch is already in progress (`isLoadingMore == true`)
+    /// or there are no additional stories available (`hasMoreStories == false`).
+    /// - Parameter storySource: Enum that controls the story source for Hacker News articles
+    func loadMoreStories(from storySource: StorySource) {
+        guard !isLoadingMore && hasMoreStories else { return }
+        fetchNextPage(from: storySource)
+    }
+
+    /// Fetch a single page of stories starting at `currentPage * pageSize`.
+    /// Saves all fetched stories at once and updates the UI with a single `loadLocalStories` call.
+    private func fetchNextPage(from storySource: StorySource) {
+        let start = currentPage * pageSize
+        guard start < allStoryIds.count else {
+            hasMoreStories = false
+            isLoadingMore = false
+            return
+        }
+        let end = min(start + pageSize, allStoryIds.count)
+        let pageIds = Array(allStoryIds[start..<end])
+        currentPage += 1
+        isLoadingMore = true
+        hasMoreStories = end < allStoryIds.count
+
+        // Create one publisher per story ID, merge them, and collect all results
+        // before writing to storage. This avoids repeated UI updates and is safe
+        // because each story publisher delivers on the main thread.
+        let publishers = pageIds.map { id in
+            self.api.story(endPoint: HackerNewsAPI.EndPoint.story(id).url)
+        }
+
+        Publishers.MergeMany(publishers)
+            .collect()
+            .sink { [weak self] completion in
+                guard let self = self else { return }
+                self.isLoadingMore = false
+                if case .failure = completion {
+                    self.fetchError = .invalidServerResponse
+                }
+            } receiveValue: { [weak self] stories in
+                guard let self = self else { return }
+                // Save every story in the page, then refresh the UI once.
+                for story in stories {
+                    var mutableStory = story
+                    mutableStory.read = false
+                    self.localStorage.saveStory(story: mutableStory, storySource: storySource, storyRead: false)
+                }
+                self.loadLocalStories(from: storySource)
+            }
+            .store(in: &self.cancellable)
     }
     
     /// Load stories from local storage and set `stories` and `unreadStories` property
