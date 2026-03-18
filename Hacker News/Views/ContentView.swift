@@ -145,7 +145,14 @@ struct ContentView: View {
             topScore = false
         }
         .onAppear {
-            storySource = storyController.localStorage.loadSettings().lastStorySource
+            let savedSource = storyController.localStorage.loadSettings().lastStorySource
+            if savedSource == storySource {
+                // Source hasn't changed, so onChange won't fire – trigger fetch manually.
+                storyController.retrieveNewStories(from: storySource)
+            } else {
+                storySource = savedSource
+                // onChange(of: storySource) will fire and trigger the fetch.
+            }
         }
         // TopBar buttons and Story Source menu.
         // Passing Binding properties to keep track of actions to update the view.
