@@ -9,26 +9,32 @@ import Foundation
 import Combine
 
 /// Persistence Storage Feature
-/// Data serialized is saved into userDefaults
+/// Data serialized is saved into userDefaults and read story IDs are synced via iCloud.
 class PersistenceController: ObservableObject {
     
     /* Properties
      
-        userDefaults    - The storage method
-        settingsKey     - The key for saving settings data
-        maxItem         - Maximum items to be saved ( items above this limit will be discated )
-        totalItems      - Current number of stories loaded/saved
+        userDefaults        - The local storage method
+        settingsKey         - The key for saving settings data
+        iCloudReadIdsKey    - The iCloud KV store key for persisting read story IDs
+        maxItem             - Maximum items to be saved ( items above this limit will be discated )
+        totalItems          - Current number of stories loaded/saved
      
      */
     private let userDefaults: UserDefaults
     private let settingsKey: String = "settings"
+    private let iCloudReadIdsKey: String = "readStoryIds"
     /// Maximum items to be saved ( items above this limit will be discated )
     public var maxItems: Int = 500
     // Current number of stories loaded/saved
     private var totalItems: Int = 0
+    // In-memory cache for read story IDs sourced from iCloud KV store
+    private var cachedReadIds: Set<Int>?
     
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
+        // Trigger an initial sync so locally cached data is up to date on launch.
+        NSUbiquitousKeyValueStore.default.synchronize()
     }
     
 }
@@ -80,16 +86,24 @@ extension PersistenceController {
     func readStory(story: StoryModel, storySource: StorySource) {
         // We set overwrite 'true' to update current story on local storage.
         saveStory(story: story, storySource: storySource, storyRead: true, overwrite: true)
+        // Persist the story ID to iCloud so other devices know it has been read.
+        persistReadStoryId(story.id)
     }
     
     /// Local all stories from local storage and return it
     /// - Parameter storySource: Story source enum
     /// - Returns: Array of Story model in descending date order
     func loadStories(storySource: StorySource) -> [StoryModel] {
+        let cloudReadIds = readStoryIds()
         var stories:[StoryModel] = []
         // Iterate throught all saved stories
         for (_, value) in userDefaults.dictionaryRepresentation().filter({$0.key.starts(with: "\(storySource.rawValue)")}) {
-            if let data = value as? Data, let story = try? PropertyListDecoder().decode(StoryModel.self, from: data) {
+            if let data = value as? Data, var story = try? PropertyListDecoder().decode(StoryModel.self, from: data) {
+                // Apply iCloud read state: if the story was marked read on any device, honour that here.
+                if cloudReadIds.contains(story.id) && story.read != true {
+                    story.read = true
+                    userDefaults.set(try? PropertyListEncoder().encode(story), forKey: "\(storySource.rawValue)-\(story.id)")
+                }
                 // Insert new story
                 stories.append(story)
             }
@@ -118,6 +132,36 @@ extension PersistenceController {
             saveSettings(data: defaultSettings)
             return defaultSettings
         }
+    }
+
+    // MARK: - iCloud Key-Value Store
+
+    /// Returns the set of story IDs that have been marked as read, persisted in iCloud.
+    /// The result is cached in memory to avoid repeated Array → Set conversions.
+    func readStoryIds() -> Set<Int> {
+        if let cached = cachedReadIds { return cached }
+        let array = NSUbiquitousKeyValueStore.default.array(forKey: iCloudReadIdsKey) as? [Int] ?? []
+        let ids = Set(array)
+        cachedReadIds = ids
+        return ids
+    }
+
+    /// Adds a story ID to the iCloud key-value store so that it is recognised as read
+    /// on all devices signed in to the same iCloud account.
+    func persistReadStoryId(_ storyId: Int) {
+        var ids = readStoryIds()
+        guard !ids.contains(storyId) else { return }
+        ids.insert(storyId)
+        cachedReadIds = ids
+        NSUbiquitousKeyValueStore.default.set(Array(ids), forKey: iCloudReadIdsKey)
+        NSUbiquitousKeyValueStore.default.synchronize()
+    }
+
+    /// Invalidates the in-memory cache of read story IDs.
+    /// Should be called when an external iCloud change notification is received
+    /// so the next read picks up the latest values from the store.
+    func invalidateReadStoryIdsCache() {
+        cachedReadIds = nil
     }
 
 }
