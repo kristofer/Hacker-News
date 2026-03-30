@@ -10,6 +10,9 @@
 		5CAB0E6E2D0C7711003BE228 /* BrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */; };
 		5CAB0E6F2D0C7711003BE228 /* BrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */; };
 		5CAB0E702D0C7711003BE228 /* BrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */; };
+		5CC03D4B2F7B0F020092C870 /* StoryImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC03D4A2F7B0F020092C870 /* StoryImageLoader.swift */; };
+		5CC03D4C2F7B0F020092C870 /* StoryImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC03D4A2F7B0F020092C870 /* StoryImageLoader.swift */; };
+		5CC03D4D2F7B0F020092C870 /* StoryImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC03D4A2F7B0F020092C870 /* StoryImageLoader.swift */; };
 		5CF53B452E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CF53B432E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md */; };
 		5CF53B492E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CF53B432E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md */; };
 		5CF53B5E2E2FC84E00270D15 /* Hacker News Share Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5CF53B542E2FC84E00270D15 /* Hacker News Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -118,6 +121,7 @@
 
 /* Begin PBXFileReference section */
 		5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserViewModel.swift; sourceTree = "<group>"; };
+		5CC03D4A2F7B0F020092C870 /* StoryImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryImageLoader.swift; sourceTree = "<group>"; };
 		5CF53B432E2FC78500270D15 /* XCODE_SETUP_INSTRUCTIONS 2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "XCODE_SETUP_INSTRUCTIONS 2.md"; sourceTree = "<group>"; };
 		5CF53B542E2FC84E00270D15 /* Hacker News Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Hacker News Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CF53B732E2FC93F00270D15 /* Hacker News.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Hacker News.entitlements"; sourceTree = "<group>"; };
@@ -324,6 +328,7 @@
 				AC824A6D2701C8A4003776FF /* StoryWebView.swift */,
 				5CAB0E6D2D0C7711003BE228 /* BrowserViewModel.swift */,
 				AC824A6E2701C8A4003776FF /* WebView.swift */,
+				5CC03D4A2F7B0F020092C870 /* StoryImageLoader.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -575,6 +580,7 @@
 				AC824A712701C8AB003776FF /* HackerNewsAPI.swift in Sources */,
 				AC824A742701C8BF003776FF /* PersistenceController.swift in Sources */,
 				AC824A792701C8D2003776FF /* StoryCellView.swift in Sources */,
+				5CC03D4C2F7B0F020092C870 /* StoryImageLoader.swift in Sources */,
 				AC824A7B2701C8D9003776FF /* StoryWebView.swift in Sources */,
 				AC824A772701C8CD003776FF /* StoryModel.swift in Sources */,
 				AC824A7E2701C8E1003776FF /* TopBarStorySourceView.swift in Sources */,
@@ -587,6 +593,7 @@
 			files = (
 				AC824A762701C8CA003776FF /* SettingsModel.swift in Sources */,
 				AC824A892701CB4E003776FF /* WebView.swift in Sources */,
+				5CC03D4B2F7B0F020092C870 /* StoryImageLoader.swift in Sources */,
 				AC824A782701C8CD003776FF /* StoryModel.swift in Sources */,
 				AC824A7F2701CB2B003776FF /* StoryController.swift in Sources */,
 				AC824A812701CB31003776FF /* PersistenceController.swift in Sources */,
@@ -612,6 +619,7 @@
 				AC824A832701CB35003776FF /* SettingsModel.swift in Sources */,
 				AC824A802701CB2E003776FF /* StoryController.swift in Sources */,
 				AC824A562701C864003776FF /* Hacker_NewsUITestsLaunchTests.swift in Sources */,
+				5CC03D4D2F7B0F020092C870 /* StoryImageLoader.swift in Sources */,
 				AC824A8E2701CB4F003776FF /* ContentView.swift in Sources */,
 				AC824A822701CB32003776FF /* PersistenceController.swift in Sources */,
 				AC824A8D2701CB4F003776FF /* StoryWebView.swift in Sources */,

@@ -15,6 +15,8 @@ struct StoryCellView: View {
     /// The Story to be displayed in this view
     @Binding var story:StoryModel
 
+    @StateObject private var imageLoader = StoryImageLoader()
+
     // Custom Date/Time formatter to return a relative
     // time from current date, ie: "1 day ago"
     private let timePass: RelativeDateTimeFormatter = {
@@ -25,10 +27,28 @@ struct StoryCellView: View {
     
     var body: some View {
         VStack(alignment:.leading, spacing: 3) {
-            Text(story.title)
-                .font(.headline)
-                .fontWeight(.heavy)
-                .foregroundColor(.indigo)
+            HStack(alignment: .top, spacing: 8) {
+                Text(story.title)
+                    .font(.headline)
+                    .fontWeight(.heavy)
+                    .foregroundColor(.indigo)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                if let imageURL = imageLoader.imageURL {
+                    AsyncImage(url: imageURL) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 60, height: 60)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                        default:
+                            EmptyView()
+                        }
+                    }
+                }
+            }
                 
             if let url = URL(string: story.url)?.host {
                 Text("\(url)")
@@ -47,6 +67,9 @@ struct StoryCellView: View {
             .opacity(0.8)
         }
         .foregroundColor(story.read ?? false ? .gray : .primary)
+        .onAppear {
+            imageLoader.load(for: story.url)
+        }
     }
 }
 
