@@ -11,11 +11,17 @@ import SwiftUI
 ///
 /// StoryModel object is used to get story details for the view
 struct StoryCellView: View {
-    
+
     /// The Story to be displayed in this view
     @Binding var story:StoryModel
 
     @StateObject private var imageLoader = StoryImageLoader()
+
+    /// In compact width (iPhone portrait, iPad slide-over/split view) cells
+    /// are too narrow for a title-left / image-right row; the title gets
+    /// squeezed. In that case we stack the image centered at the top and put
+    /// the title below it instead.
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     // Custom Date/Time formatter to return a relative
     // time from current date, ie: "1 day ago"
@@ -24,32 +30,27 @@ struct StoryCellView: View {
         formatter.unitsStyle = .full
         return formatter
     }()
-    
+
     var body: some View {
         VStack(alignment:.leading, spacing: 3) {
-            HStack(alignment: .top, spacing: 8) {
-                Text(story.title)
-                    .font(.headline)
-                    .fontWeight(.heavy)
-                    .foregroundColor(.indigo)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
+            if horizontalSizeClass == .compact {
                 if let imageURL = imageLoader.imageURL {
-                    AsyncImage(url: imageURL) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 60, height: 60)
-                                .clipShape(RoundedRectangle(cornerRadius: 6))
-                        default:
-                            EmptyView()
-                        }
+                    HStack {
+                        Spacer()
+                        storyImage(url: imageURL, size: 80)
+                        Spacer()
+                    }
+                }
+                titleText
+            } else {
+                HStack(alignment: .top, spacing: 8) {
+                    titleText
+                    if let imageURL = imageLoader.imageURL {
+                        storyImage(url: imageURL, size: 60)
                     }
                 }
             }
-                
+
             if let url = URL(string: story.url)?.host {
                 Text("\(url)")
                     .font(.caption)
@@ -69,6 +70,30 @@ struct StoryCellView: View {
         .foregroundColor(story.read ?? false ? .gray : .primary)
         .onAppear {
             imageLoader.load(for: story.url)
+        }
+    }
+
+    private var titleText: some View {
+        Text(story.title)
+            .font(.headline)
+            .fontWeight(.heavy)
+            .foregroundColor(.indigo)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private func storyImage(url: URL, size: CGFloat) -> some View {
+        AsyncImage(url: url) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: size, height: size)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+            default:
+                EmptyView()
+            }
         }
     }
 }
