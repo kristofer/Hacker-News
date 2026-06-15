@@ -68,11 +68,22 @@ struct ContentView: View {
                                 } label: {
                                     StoryCellView(story: .constant(story))
                                         .padding([.top, .bottom, .leading, .trailing], 10)
-                                    
+
                                 }
                                 .background(.yellow)
                                 .opacity(story.read ?? false ? 0.4 : 0.9)
                                 .cornerRadius(15)
+                                // Secondary infinite-scroll trigger: as soon as the
+                                // user scrolls into the older locally-stored region
+                                // (id below the current fresh-fetch boundary), start
+                                // pulling gap stories so they materialise where the
+                                // user is reading rather than only at the absolute bottom.
+                                .onAppear {
+                                    if let boundary = storyController.freshBoundaryStoryId,
+                                       story.id < boundary {
+                                        storyController.loadMoreStories(from: storySource)
+                                    }
+                                }
                             }
                         }
                         .padding([.leading, .trailing], 10)

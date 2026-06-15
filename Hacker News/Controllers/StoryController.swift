@@ -95,6 +95,11 @@ class StoryController: StoryControllerProtocol, ObservableObject {
         allStoryIds     - Full ordered list of story IDs from the current API response.
         currentPage     - Index of the next page to fetch (0-based).
         pageSize        - Number of stories fetched per page.
+        gapNextId       - Next item ID to probe when filling the gap between the
+                          freshly-fetched IDs and older, locally-stored stories.
+        gapStopAtId     - The lowest ID we attempt while gap-filling; this is the
+                          ID immediately above the newest locally-stored older story.
+        gapBatchSize    - Number of item IDs probed per gap-fill batch.
 
      */
     var cancellable = Set<AnyCancellable>()
@@ -102,9 +107,17 @@ class StoryController: StoryControllerProtocol, ObservableObject {
     let localStorage = PersistenceController()
     @Published var isLoadingMore: Bool = false
     @Published var hasMoreStories: Bool = false
+    /// Lowest ID in the current API "fresh" list, published so the UI can
+    /// detect when a displayed cell falls in the older, locally-stored
+    /// region (id < freshBoundaryStoryId) and trigger gap-fill on appear.
+    /// Set only after the fresh page list is exhausted and a real gap exists.
+    @Published var freshBoundaryStoryId: Int? = nil
     private var allStoryIds: [Int] = []
     private var currentPage: Int = 0
     let pageSize: Int = 30
+    private var gapNextId: Int? = nil
+    private var gapStopAtId: Int? = nil
+    private let gapBatchSize: Int = 60
 
     init() {
         // Observe iCloud key-value store changes so that read state updated on another
@@ -131,6 +144,9 @@ class StoryController: StoryControllerProtocol, ObservableObject {
         currentPage = 0
         hasMoreStories = false
         isLoadingMore = false
+        gapNextId = nil
+        gapStopAtId = nil
+        freshBoundaryStoryId = nil
 
         // Fetch news stories ID from API
         api.allStoriesId(endPoint: storySource.endPointConvesion().url)
@@ -152,13 +168,21 @@ class StoryController: StoryControllerProtocol, ObservableObject {
 
     }
 
-    /// Load the next page of stories from the API for the given source.
+    /// Load the next page of stories for the given source.
+    /// While freshly-fetched API IDs remain, walks through them in `pageSize`
+    /// pages. Once those are exhausted, falls back to fetching items in the
+    /// gap between the oldest fresh ID and the newest locally-stored older
+    /// story, so the user can scroll continuously across past sessions.
     /// Does nothing if a fetch is already in progress (`isLoadingMore == true`)
     /// or there are no additional stories available (`hasMoreStories == false`).
     /// - Parameter storySource: Enum that controls the story source for Hacker News articles
     func loadMoreStories(from storySource: StorySource) {
         guard !isLoadingMore && hasMoreStories else { return }
-        fetchNextPage(from: storySource)
+        if currentPage * pageSize < allStoryIds.count {
+            fetchNextPage(from: storySource)
+        } else {
+            fetchGapBatch(from: storySource)
+        }
     }
 
     /// Fetch a single page of stories starting at `currentPage * pageSize`.
@@ -194,6 +218,74 @@ class StoryController: StoryControllerProtocol, ObservableObject {
             } receiveValue: { [weak self] stories in
                 guard let self = self else { return }
                 // Save every story in the page, then refresh the UI once.
+                for story in stories {
+                    var mutableStory = story
+                    mutableStory.read = false
+                    self.localStorage.saveStory(story: mutableStory, storySource: storySource, storyRead: false)
+                }
+                self.loadLocalStories(from: storySource)
+                // If the freshly-fetched ID list is now exhausted, prime the
+                // gap-fill state so the next scroll trigger can continue
+                // backfilling stories between this session and the previous one.
+                if self.currentPage * self.pageSize >= self.allStoryIds.count {
+                    self.setupGapFill(from: storySource)
+                }
+            }
+            .store(in: &self.cancellable)
+    }
+
+    /// Determines the ID range between the oldest freshly-fetched story and the
+    /// newest locally-stored older story, then prepares state to walk that range
+    /// downward in batches. The Hacker News `newstories` endpoint returns at
+    /// most the latest ~500 IDs, so any time spent away longer than that window
+    /// leaves a gap that this method enables `fetchGapBatch` to fill.
+    private func setupGapFill(from storySource: StorySource) {
+        guard let lowestFreshId = allStoryIds.min() else {
+            hasMoreStories = false
+            return
+        }
+        let storedIds = localStorage.loadStories(storySource: storySource).map(\.id)
+        let olderIds = storedIds.filter { $0 < lowestFreshId }
+        guard let highestOlderId = olderIds.max(),
+              lowestFreshId - 1 >= highestOlderId + 1 else {
+            hasMoreStories = false
+            return
+        }
+        gapNextId = lowestFreshId - 1
+        gapStopAtId = highestOlderId + 1
+        freshBoundaryStoryId = lowestFreshId
+        hasMoreStories = true
+    }
+
+    /// Probes a batch of item IDs by descending ID, decoding each as a story.
+    /// Items that are not stories (comments, polls, etc.) fail to decode and
+    /// are silently dropped by the API publisher, so only valid stories land
+    /// in storage.
+    private func fetchGapBatch(from storySource: StorySource) {
+        guard let next = gapNextId, let stop = gapStopAtId, next >= stop else {
+            hasMoreStories = false
+            return
+        }
+        let batchEnd = max(stop, next - gapBatchSize + 1)
+        let batchIds = Array(stride(from: next, through: batchEnd, by: -1))
+        gapNextId = batchEnd - 1
+        hasMoreStories = (gapNextId ?? Int.min) >= stop
+        isLoadingMore = true
+
+        let publishers = batchIds.map { id in
+            self.api.story(endPoint: HackerNewsAPI.EndPoint.story(id).url)
+        }
+
+        Publishers.MergeMany(publishers)
+            .collect()
+            .sink { [weak self] completion in
+                guard let self = self else { return }
+                self.isLoadingMore = false
+                if case .failure = completion {
+                    self.fetchError = .invalidServerResponse
+                }
+            } receiveValue: { [weak self] stories in
+                guard let self = self else { return }
                 for story in stories {
                     var mutableStory = story
                     mutableStory.read = false
